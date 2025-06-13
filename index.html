@@ -1,98 +1,196 @@
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
   <title>Clicker Store</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; background: #f0f0f0; }
-    .nav-buttons button { margin: 5px; padding: 10px 20px; font-size: 16px; }
-    .store-item { margin: 10px 0; }
-    .panel { display: none; margin-top: 20px; padding: 20px; background: white; border-radius: 10px; }
-    .active { display: block; }
-    .total { font-weight: bold; margin-top: 10px; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #003366;
+      color: white;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: yellow;
+    }
+
+    .nav-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background: yellow;
+      color: #003366;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .store, .customization, .sign-in {
+      background: #004080;
+      padding: 20px;
+      margin-top: 20px;
+      border-radius: 10px;
+    }
+
+    .clicker-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .clicker-item {
+      background: yellow;
+      color: #003366;
+      padding: 10px;
+      text-align: center;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .wasd-model {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .key-row {
+      display: flex;
+      justify-content: center;
+    }
+
+    .key {
+      width: 50px;
+      height: 50px;
+      margin: 5px;
+      background: yellow;
+      color: #003366;
+      font-weight: bold;
+      font-size: 20px;
+      line-height: 50px;
+      border-radius: 8px;
+    }
+
+    .toggle {
+      margin-top: 10px;
+    }
+
+    input[type="checkbox"] {
+      transform: scale(1.3);
+      margin-left: 10px;
+    }
+
+    .total {
+      font-size: 20px;
+      color: yellow;
+      margin-top: 10px;
+    }
+
+    label, input {
+      display: block;
+      margin: 5px 0;
+    }
   </style>
 </head>
 <body>
   <h1>Clicker Store</h1>
+
   <div class="nav-buttons">
-    <button onclick="showPanel('store')">Store</button>
-    <button onclick="showPanel('people')">People</button>
-    <button onclick="showPanel('signin')">Sign In</button>
-    <button onclick="showPanel('customize')">Customize</button>
+    <button onclick="showSection('store')">Store</button>
+    <button onclick="showSection('people')">People</button>
+    <button onclick="showSection('sign-in')">Sign In</button>
+    <button onclick="showSection('customize')">Customize</button>
   </div>
 
-  <div id="store" class="panel">
+  <div id="store" class="store">
     <h2>Store</h2>
-    <form id="storeForm">
-      <label><input type="checkbox" name="clicker" value="1"> 1x1 Clicker</label><br>
-      <label><input type="checkbox" name="clicker" value="2"> 2x2 Clicker</label><br>
-      <label><input type="checkbox" name="clicker" value="6"> 3x2 Clicker</label><br>
-      <label><input type="checkbox" name="clicker" value="4"> WASD Clicker</label><br>
-      <label><input type="checkbox" name="clicker" value="16"> 4x4 Clicker</label><br>
-      <label><input type="checkbox" name="clicker" value="25"> 5x5 Clicker</label><br><br>
-      <label><input type="checkbox" id="color"> Add Color (30¢)</label><br><br>
-      <button type="button" onclick="calculateTotal()">Calculate Total</button>
-    </form>
-    <div class="total" id="totalOutput"></div>
+    <div class="clicker-grid">
+      <div class="clicker-item" onclick="selectClicker(1)">1x1 Clicker</div>
+      <div class="clicker-item" onclick="selectClicker(4)">2x2 Clicker</div>
+      <div class="clicker-item" onclick="selectClicker(6)">3x2 Clicker</div>
+      <div class="clicker-item" onclick="selectClicker(4)">WASD Clicker</div>
+      <div class="clicker-item" onclick="selectClicker(16)">4x4 Clicker</div>
+      <div class="clicker-item" onclick="selectClicker(25)">5x5 Clicker</div>
+    </div>
+
+    <div class="toggle">
+      <label>
+        Add Color ($0.30 total):
+        <input type="checkbox" id="colorToggle" onchange="updateTotal()">
+      </label>
+    </div>
+
+    <div class="total" id="totalDisplay">Total: $0.00 USD</div>
   </div>
 
-  <div id="people" class="panel">
-    <h2>People</h2>
-    <p>Feature coming soon!</p>
+  <div id="customize" class="customization" style="display:none;">
+    <h2>Customize</h2>
+    <p>Add or remove clickers and colors using the store options and toggle above.</p>
+
+    <div class="wasd-model">
+      <div class="key-row">
+        <div class="key">W</div>
+      </div>
+      <div class="key-row">
+        <div class="key">A</div>
+        <div class="key">S</div>
+        <div class="key">D</div>
+      </div>
+    </div>
   </div>
 
-  <div id="signin" class="panel">
+  <div id="sign-in" class="sign-in" style="display:none;">
     <h2>Sign In</h2>
-    <form onsubmit="handleSignIn(event)">
-      <label>Grade: <input type="text" id="grade" required></label><br><br>
-      <label>Lunch Period: <input type="text" id="lunch" required></label><br><br>
-      <label>Classes: <input type="text" id="classes" required></label><br><br>
-      <button type="submit">Submit</button>
-    </form>
-    <div id="meetingInfo"></div>
+    <label>Grade: <input type="text" id="gradeInput"></label>
+    <label>Lunch: <input type="text" id="lunchInput"></label>
+    <label>Classes you have (comma-separated): <input type="text" id="classInput"></label>
+    <button onclick="checkMeeting()">Check Meeting Spot</button>
+    <p id="meetingResult"></p>
   </div>
 
-  <div id="customize" class="panel">
-    <h2>Customization Panel</h2>
-    <p><button onclick="toggleOption('color')">Add/Remove Color</button></p>
-    <p><button onclick="toggleOption('clicker')">Add/Remove Clicker</button></p>
-    <div id="customOutput"></div>
+  <div id="people" class="store" style="display:none;">
+    <h2>People</h2>
+    <p>Coming soon: info about buyers and sellers!</p>
   </div>
 
   <script>
-    function showPanel(panelId) {
-      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-      document.getElementById(panelId).classList.add('active');
+    let currentKeys = 0;
+
+    function showSection(id) {
+      document.getElementById('store').style.display = 'none';
+      document.getElementById('customize').style.display = 'none';
+      document.getElementById('sign-in').style.display = 'none';
+      document.getElementById('people').style.display = 'none';
+      document.getElementById(id).style.display = 'block';
     }
 
-    function calculateTotal() {
-      const checkboxes = document.querySelectorAll('input[name="clicker"]:checked');
-      let total = 0;
-      checkboxes.forEach(cb => {
-        total += parseInt(cb.value);
-      });
-      total *= 0.80;
-      if (document.getElementById('color').checked) total += 0.30;
-      document.getElementById('totalOutput').textContent = `Total: $${total.toFixed(2)} USD`;
+    function selectClicker(keys) {
+      currentKeys = keys;
+      updateTotal();
     }
 
-    function toggleOption(type) {
-      const output = document.getElementById('customOutput');
-      output.textContent = `${type.charAt(0).toUpperCase() + type.slice(1)} toggled.`;
+    function updateTotal() {
+      const color = document.getElementById("colorToggle").checked ? 0.30 : 0;
+      const total = (currentKeys * 0.80 + color).toFixed(2);
+      document.getElementById("totalDisplay").innerText = `Total: $${total} USD`;
     }
 
-    function handleSignIn(e) {
-      e.preventDefault();
-      const grade = document.getElementById('grade').value;
-      const lunch = document.getElementById('lunch').value;
-      const classes = document.getElementById('classes').value.toLowerCase();
-
-      let location = "Cafeteria Table 3"; // Example match
-      if (classes.includes("math") || classes.includes("science")) {
-        location = "Meet by the Library - Code: 204A";
+    function checkMeeting() {
+      const classes = document.getElementById("classInput").value.toLowerCase();
+      let result = "Please see the seller in-person for location.";
+      if (classes.includes("science")) {
+        result = "Meet in Science Room 102 at lunch.";
+      } else if (classes.includes("math")) {
+        result = "Meet in Math Hallway near lockers.";
       }
-      document.getElementById('meetingInfo').textContent = `Meet your seller at: ${location}`;
+      document.getElementById("meetingResult").innerText = result;
     }
   </script>
 </body>
-</html>
