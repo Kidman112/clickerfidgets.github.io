@@ -1,0 +1,98 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clicker Store</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f0f0f0; }
+    .nav-buttons button { margin: 5px; padding: 10px 20px; font-size: 16px; }
+    .store-item { margin: 10px 0; }
+    .panel { display: none; margin-top: 20px; padding: 20px; background: white; border-radius: 10px; }
+    .active { display: block; }
+    .total { font-weight: bold; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Clicker Store</h1>
+  <div class="nav-buttons">
+    <button onclick="showPanel('store')">Store</button>
+    <button onclick="showPanel('people')">People</button>
+    <button onclick="showPanel('signin')">Sign In</button>
+    <button onclick="showPanel('customize')">Customize</button>
+  </div>
+
+  <div id="store" class="panel">
+    <h2>Store</h2>
+    <form id="storeForm">
+      <label><input type="checkbox" name="clicker" value="1"> 1x1 Clicker</label><br>
+      <label><input type="checkbox" name="clicker" value="2"> 2x2 Clicker</label><br>
+      <label><input type="checkbox" name="clicker" value="6"> 3x2 Clicker</label><br>
+      <label><input type="checkbox" name="clicker" value="4"> WASD Clicker</label><br>
+      <label><input type="checkbox" name="clicker" value="16"> 4x4 Clicker</label><br>
+      <label><input type="checkbox" name="clicker" value="25"> 5x5 Clicker</label><br><br>
+      <label><input type="checkbox" id="color"> Add Color (30¢)</label><br><br>
+      <button type="button" onclick="calculateTotal()">Calculate Total</button>
+    </form>
+    <div class="total" id="totalOutput"></div>
+  </div>
+
+  <div id="people" class="panel">
+    <h2>People</h2>
+    <p>Feature coming soon!</p>
+  </div>
+
+  <div id="signin" class="panel">
+    <h2>Sign In</h2>
+    <form onsubmit="handleSignIn(event)">
+      <label>Grade: <input type="text" id="grade" required></label><br><br>
+      <label>Lunch Period: <input type="text" id="lunch" required></label><br><br>
+      <label>Classes: <input type="text" id="classes" required></label><br><br>
+      <button type="submit">Submit</button>
+    </form>
+    <div id="meetingInfo"></div>
+  </div>
+
+  <div id="customize" class="panel">
+    <h2>Customization Panel</h2>
+    <p><button onclick="toggleOption('color')">Add/Remove Color</button></p>
+    <p><button onclick="toggleOption('clicker')">Add/Remove Clicker</button></p>
+    <div id="customOutput"></div>
+  </div>
+
+  <script>
+    function showPanel(panelId) {
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      document.getElementById(panelId).classList.add('active');
+    }
+
+    function calculateTotal() {
+      const checkboxes = document.querySelectorAll('input[name="clicker"]:checked');
+      let total = 0;
+      checkboxes.forEach(cb => {
+        total += parseInt(cb.value);
+      });
+      total *= 0.80;
+      if (document.getElementById('color').checked) total += 0.30;
+      document.getElementById('totalOutput').textContent = `Total: $${total.toFixed(2)} USD`;
+    }
+
+    function toggleOption(type) {
+      const output = document.getElementById('customOutput');
+      output.textContent = `${type.charAt(0).toUpperCase() + type.slice(1)} toggled.`;
+    }
+
+    function handleSignIn(e) {
+      e.preventDefault();
+      const grade = document.getElementById('grade').value;
+      const lunch = document.getElementById('lunch').value;
+      const classes = document.getElementById('classes').value.toLowerCase();
+
+      let location = "Cafeteria Table 3"; // Example match
+      if (classes.includes("math") || classes.includes("science")) {
+        location = "Meet by the Library - Code: 204A";
+      }
+      document.getElementById('meetingInfo').textContent = `Meet your seller at: ${location}`;
+    }
+  </script>
+</body>
+</html>
